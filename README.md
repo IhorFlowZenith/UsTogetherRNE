@@ -8,26 +8,20 @@ A beautiful React Native mobile application that helps couples track and celebra
 
 ## 📱 Screenshots
 
-### Onboarding Screen
-Your journey begins here. A warm welcome with your relationship starting point.
-
-![OnBoarding](OnBoarding.jpg)
-
-### Home Screen
-Real-time statistics of your relationship at a glance. See exactly how long you've been together in multiple time units.
-
-![Home](Home.jpg)
-
-### Calendar Screen
-Visualize your entire relationship journey with our interactive calendar. Each heart represents a day together.
-
-![Calendar](Calendar.jpg)
-
-### Settings Screen
-Set and customize your relationship start date. Input day, month, year, hour, and minute to the exact moment.
-
-![Settings](Settings.jpg)
-
+<table>
+  <tr>
+    <td align="center"><b>Calendar</b></td>
+    <td align="center"><b>Home</b></td>
+    <td align="center"><b>Onboarding</b></td>
+    <td align="center"><b>Settings</b></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/IhorFlowZenith/UsTogetherRNE/blob/master/assets/screenshots/Calendar.jpg" width="200"/></td>
+    <td><img src="https://github.com/IhorFlowZenith/UsTogetherRNE/blob/master/assets/screenshots/Home.jpg" width="200"/></td>
+    <td><img src="https://github.com/IhorFlowZenith/UsTogetherRNE/blob/master/assets/screenshots/OnBoarding.jpg" width="200"/></td>
+    <td><img src="https://github.com/IhorFlowZenith/UsTogetherRNE/blob/master/assets/screenshots/Settings.jpg" width="200"/></td>
+  </tr>
+</table>
 ---
 
 ## 🎯 Features
