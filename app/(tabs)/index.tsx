@@ -1,98 +1,97 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
+import StatCard from "@/components/StatCard";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState, useEffect } from 'react';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+function calcStats(dateStr: string) {
+  const start = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - start.getTime();
+
+  const seconds = Math.floor(diffMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30);
+
+  return { seconds, minutes, hours, days, weeks, months };
+}
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const [stats, setStats] = useState({ seconds: 0, minutes: 0, hours: 0, days: 0, weeks: 0, months: 0 });
+  const [dateStr, setDateStr] = useState<string | null>(null);
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  useEffect(() => {
+    const load = async () => {
+      const saved = await AsyncStorage.getItem('togetherDate');
+      if (saved) {
+        setDateStr(saved);
+        setStats(calcStats(saved));
+      }
+    };
+    load();
+  }, []);
+
+  useEffect(() => {
+    if (!dateStr) return;
+
+    const interval = setInterval(() => {
+      setStats(calcStats(dateStr));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [dateStr]);
+
+  const formattedDate = dateStr
+    ? new Date(dateStr).toLocaleDateString('en-US')
+    : 'Не задано';
+
+  return (
+    <View style={styles.container}>
+      <View>
+        <Text style={styles.title}>UsTogether</Text>
+        <View style={styles.divider} />
+      </View>
+
+      <StatCard title="DAYS TOGETHER" value={stats.days} badge={true} badgeText={formattedDate} main={true} />
+
+      <View style={styles.row}>
+        <StatCard title="MONTHS" value={stats.months} half={true} />
+        <StatCard title="WEEKS" value={stats.weeks} half={true} />
+      </View>
+
+      <StatCard title="TOTAL HOURS" value={stats.hours} />
+
+      <View style={styles.row}>
+        <StatCard title="MINUTES" value={stats.minutes} half={true} ms={true}/>
+        <StatCard title="SECONDS" value={stats.seconds} half={true} ms={true} />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 40,
+    gap: 25,
+    alignItems: "center",
+  },
+  row: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    gap: 20,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#E74C3C',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+  divider: {
+    borderWidth: 1.5,
+    borderColor: '#E74C3C',
+    marginTop: 5,
+    borderRadius: 20,
+  }
 });
